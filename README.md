@@ -53,7 +53,7 @@ vagrant ssh slave    # Para acceder al servidor esclavo
 ```
 ## Configuracion Maestro y Esclavo
 
-Para configurar el maestro correctamente debemos hacer estos cambios:
+Para configurar las maquinas correctamente debemos hacer estos cambios a cada una en funcion de su ip:
 
 1. **Acceder al archivo named.conf.options y darle esta configuracion**:
    ```bash
