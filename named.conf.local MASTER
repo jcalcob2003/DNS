@@ -1,0 +1,19 @@
+//
+// Do any local configuration here
+//
+
+zone "sistema.test" {
+    type master;
+    file "/etc/bind/db.sistema.test";
+    allow-transfer { 192.168.57.102; };
+};
+
+zone "57.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192.168.57";
+};
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
