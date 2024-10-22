@@ -51,11 +51,11 @@ Para acceder a cada máquina y verificar el estado de la configuración:
 vagrant ssh master   # Para acceder al servidor maestro
 vagrant ssh slave    # Para acceder al servidor esclavo
 ```
-## Configuracion Maestro
+## Configuracion Maestro y Esclavo
 
 Para configurar el maestro correctamente debemos hacer estos cambios:
 
-1. Acceder al archivo named.conf.options y darle esta configuracion:
+1. **Acceder al archivo named.conf.options y darle esta configuracion**:
    ```bash
    options {
 	directory "/var/cache/bind";
@@ -84,7 +84,7 @@ Para configurar el maestro correctamente debemos hacer estos cambios:
 	listen-on-v6 { any; };
 
    recursion yes;:
-<h2>Explicacion</h2>
+**Explicacion**
 
 ```bash
 recursion yes;
@@ -118,3 +118,40 @@ forwarders { 208.67.222.222; };:
 
 Define los servidores DNS a los que se reenviarán las consultas para las que el servidor no tiene autoridad (es decir, cuando el servidor no puede responder directamente a una consulta, la envía a un reenviador). En este caso, se está usando OpenDNS, que es un servicio DNS público confiable y rápido. Esta configuración permite reenviar consultas externas fuera de la zona sistema.test a OpenDNS.
 
+2. **Configurar la zona directa e inversa**:
+``` bash
+//
+// Do any local configuration here
+//
+
+zone "sistema.test" {
+    type master;
+    file "/etc/bind/db.sistema.test";
+    allow-transfer { 192.168.57.102; };
+};
+
+zone "57.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/db.192.168.57";
+};
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+```
+3. **Creamos archivo zona directa**:
+``` bash
+\$TTL 86400
+@   IN  SOA ns1.sistema.test. root.sistema.test. (
+            2         ; Serial
+            604800    ; Refresh
+            86400     ; Retry
+            2419200   ; Expire
+            604800 )  ; Negative Cache TTL
+;
+@       IN  NS      ns1.sistema.test.
+@       IN  NS      ns2.sistema.test.
+
+ns1     IN  A       192.168.57.103
+ns2     IN  A       192.168.57.102
+```
